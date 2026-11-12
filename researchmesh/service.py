@@ -12,6 +12,7 @@ from .decisions.graph import DecisionGraph
 from .decisions.review import ReviewQueue
 from .snapshots.master import MasterRecords
 from .snapshots.releases import Releases
+from .connectors.database import DatabaseConnector
 from .contracts import fields, fail
 
 
@@ -26,6 +27,7 @@ class ResearchMesh:
         self.graph = DecisionGraph(self.store, self.sources, self.evidence)
         self.sources.on_change = self.graph.rebuild
         self.changes = ChangeFeed(self.store, self.sources)
+        self.connectors = DatabaseConnector(self.store, self.sources)
         self.review = ReviewQueue(self.store, self.evidence, self.graph)
         self.masters = MasterRecords(
             self.store, self.sources, self.normalizer, self.graph
@@ -72,6 +74,19 @@ class ResearchMesh:
                 "dictionary",
                 self.dictionary,
                 ["put", "remove", "list", "impact", "resolve"],
+            ),
+            (
+                "connector",
+                self.connectors,
+                [
+                    "snapshot",
+                    "rebuild",
+                    "poll",
+                    "status",
+                    "lineage",
+                    "ledger",
+                    "verify",
+                ],
             ),
             ("evidence", self.evidence, ["compare", "explain"]),
             (

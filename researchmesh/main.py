@@ -17,6 +17,7 @@ def main(argv=None):
     parser.add_argument("--db", default="researchmesh.sqlite3")
     commands = parser.add_subparsers(dest="command", required=True)
     commands.add_parser("demo")
+    commands.add_parser("rehearse")
     commands.add_parser("describe")
     execute = commands.add_parser("run")
     execute.add_argument("request")
@@ -33,6 +34,10 @@ def main(argv=None):
     try:
         if args.command == "demo":
             from .demo import run
+
+            result = run()
+        elif args.command == "rehearse":
+            from .connectors.rehearsal import run
 
             result = run()
         elif args.command == "verify":
